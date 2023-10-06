@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { FormControl } from './components/FormControl'
+import { ModeToggle } from './components/ModeToggle'
 import { Button } from './components/ui/button'
 import { Input } from './components/ui/input'
 import { Separator } from './components/ui/separator'
@@ -55,15 +56,19 @@ export function App() {
     <main className="h-screen flex flex-col">
       <header className="flex justify-between items-center border-b p-4">
         <h1 className="font-bold text-lg">Calculadora do aluguel</h1>
-        <Button asChild variant="outline" size="icon">
-          <a
-            href="https://github.com/GabriPires/calculadora-aluguel"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Github />
-          </a>
-        </Button>
+
+        <div className="flex items-center gap-2">
+          <ModeToggle />
+          <Button asChild variant="outline" size="icon">
+            <a
+              href="https://github.com/GabriPires/calculadora-aluguel"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Github />
+            </a>
+          </Button>
+        </div>
       </header>
 
       <form
