@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Github } from 'lucide-react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { FormControl } from './components/FormControl'
@@ -10,16 +11,19 @@ import { Separator } from './components/ui/separator'
 const billFormSchema = z.object({
   days: z.coerce.number().int().positive().min(1).max(30),
   person: z.coerce.number().int().positive().min(1).max(4),
-  waterBill: z.coerce.number().positive().min(1),
-  energyBill: z.coerce.number().positive().min(1),
-  internetBill: z.coerce.number().positive().min(1),
-  rent: z.coerce.number().positive().min(1),
-  others: z.coerce.number().positive().min(1),
+  waterBill: z.coerce.number().min(0),
+  energyBill: z.coerce.number().min(0),
+  internetBill: z.coerce.number().min(0),
+  rent: z.coerce.number().min(0),
+  others: z.coerce.number().min(0),
 })
 
 type BillFormData = z.infer<typeof billFormSchema>
 
 export function App() {
+  const [totalToRent, setTotalToRent] = useState(0)
+  const [totalToBills, setTotalToBills] = useState(0)
+
   const {
     handleSubmit,
     register,
@@ -30,16 +34,26 @@ export function App() {
       person: 3,
       days: 8,
       rent: 1000,
+      others: 0,
     },
   })
 
   function onSubmit(data: BillFormData) {
-    console.log(data)
+    const percentageOfUsedDaysInMonth = data.days / 30
+    const totalToRent = (data.rent * percentageOfUsedDaysInMonth) / data.person
+
+    setTotalToRent(totalToRent)
+
+    const totalToBills =
+      (data.waterBill + data.energyBill + data.internetBill + data.others) /
+      data.person
+
+    setTotalToBills(totalToBills)
   }
 
   return (
     <main className="h-screen flex flex-col">
-      <header className="flex justify-between items-center border-b py-4 px-2">
+      <header className="flex justify-between items-center border-b p-4">
         <h1 className="font-bold text-lg">Calculadora do aluguel</h1>
         <Button asChild variant="outline" size="icon">
           <a
@@ -69,7 +83,7 @@ export function App() {
           htmlFor="days"
           errorMessage={errors.days?.message}
         >
-          <Input {...register('days')} />
+          <Input type="number" {...register('days')} />
         </FormControl>
 
         <Separator />
@@ -79,7 +93,7 @@ export function App() {
           htmlFor="rent"
           errorMessage={errors.rent?.message}
         >
-          <Input {...register('rent')} />
+          <Input type="number" {...register('rent')} />
         </FormControl>
 
         <FormControl
@@ -87,7 +101,7 @@ export function App() {
           htmlFor="waterBill"
           errorMessage={errors.waterBill?.message}
         >
-          <Input {...register('waterBill')} />
+          <Input type="number" {...register('waterBill')} />
         </FormControl>
 
         <FormControl
@@ -95,7 +109,7 @@ export function App() {
           htmlFor="energyBill"
           errorMessage={errors.energyBill?.message}
         >
-          <Input {...register('energyBill')} />
+          <Input type="number" {...register('energyBill')} />
         </FormControl>
 
         <FormControl
@@ -103,7 +117,7 @@ export function App() {
           htmlFor="internetBill"
           errorMessage={errors.internetBill?.message}
         >
-          <Input {...register('internetBill')} />
+          <Input type="number" {...register('internetBill')} />
         </FormControl>
 
         <Separator />
@@ -113,12 +127,29 @@ export function App() {
           htmlFor="others"
           errorMessage={errors.others?.message}
         >
-          <Input {...register('others')} />
+          <Input type="number" {...register('others')} />
         </FormControl>
 
         <Separator />
 
         <Button type="submit">Calcular</Button>
+
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-bold text-lg">
+            Valor do aluguel{' '}
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }).format(totalToRent)}
+          </span>
+          <span className="font-bold text-lg">
+            Valor das contas{' '}
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }).format(totalToBills)}
+          </span>
+        </div>
       </form>
     </main>
   )
