@@ -68,7 +68,7 @@ export function App() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 flex-1 p-4"
+        className="flex flex-col gap-4 flex-1 p-4 md:max-w-lg md:min-w-[32rem] md:mx-auto"
       >
         <FormControl
           label="Dividir por quantas pessoas?"
@@ -134,21 +134,26 @@ export function App() {
 
         <Button type="submit">Calcular</Button>
 
-        <div className="flex items-center justify-between gap-2">
-          <span className="font-bold text-lg">
-            Valor do aluguel{' '}
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            }).format(totalToRent)}
-          </span>
-          <span className="font-bold text-lg">
-            Valor das contas{' '}
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            }).format(totalToBills)}
-          </span>
+        <div className="grid grid-cols-2 w-full gap-2 md:mt-auto">
+          <div className="flex flex-col">
+            <h2 className="font-bold text-lg">Valor do aluguel</h2>
+            <span>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(totalToRent)}
+            </span>
+          </div>
+
+          <div className="flex flex-col">
+            <h2 className="font-bold text-lg">Valor das contas</h2>
+            <span>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(totalToBills)}
+            </span>
+          </div>
         </div>
       </form>
     </main>
